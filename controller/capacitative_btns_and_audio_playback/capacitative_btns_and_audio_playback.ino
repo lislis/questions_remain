@@ -5,10 +5,10 @@
 const int FILE_LENGTH = 3;
 
 // between the base pin and the respective others is a > 1M Ohm resistor
-#define basePin 4
+#define basePin 3
 #define pin1 2
-#define pin2 6
-#define pin3 8
+#define pin2 5
+#define pin3 6
 #define touchThreshold 500
 // files[index][0] = pin
 // files[index][1] = filename
@@ -24,7 +24,7 @@ void setup(void) {
   Serial.begin(9600);
  
   Serial.print("Initializing SD card...");
-  if (!SD.begin()) {
+  if (!SD.begin(10)) {
     Serial.println("failed!");
     while(true);  // stay here.
   }

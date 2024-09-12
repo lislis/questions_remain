@@ -46,14 +46,14 @@ int poi[ROWS][COLS] = {{7, 0, 0, 1}, {6, 0, 0, 2}, {5, 0, 0, 3}, {4, 0, 0, 4}, {
 // between the base pin and the respective others is a > 1M Ohm resistor
 CapacitiveSensor poi_cap[ROWS] = {
   CapacitiveSensor(3, 2),
-  CapacitiveSensor(3, 4),
+  CapacitiveSensor(3, 4),//
   CapacitiveSensor(3, 5),
   CapacitiveSensor(6, 7),
   CapacitiveSensor(6, 8),
   CapacitiveSensor(11, 9),
-  CapacitiveSensor(11, 10),
-  CapacitiveSensor(11, 12),
-  CapacitiveSensor(11, 13)
+  CapacitiveSensor(11, 10),//
+  CapacitiveSensor(11, 12),//
+  CapacitiveSensor(11, 13)//
   };
 
 TMRpcm audio;
@@ -71,7 +71,7 @@ void setup(void) {
   mcp.pinMode(error, OUTPUT);
 
   Serial.print("waiting for mcp...");
-  if (!mcp.begin_I2C()) {
+  if (!mcp.begin_I2C(4)) {
     Serial.println("failed!");
     error();
     while(1);
