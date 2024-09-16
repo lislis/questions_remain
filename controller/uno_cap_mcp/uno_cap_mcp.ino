@@ -63,42 +63,55 @@ void setup(void) {
   mcp.pinMode(ready_led, OUTPUT);
   mcp.pinMode(error_led, OUTPUT);
 
-  Serial.print("waiting for mcp...");
-  if (!mcp.begin_I2C(4)) {
-    Serial.println("failed!");
+  //Serial.print("waiting for mcp...");
+  if (!mcp.begin_I2C()) {
+    //Serial.println("failed!");
     error();
     while(1);
   }
-  Serial.println("OK!");
+  //Serial.println("OK!");
+
+  // for (int i = 0; i < 16; i++) {
+  //   mcp.pinMode(i, OUTPUT);
+  //   mcp.digitalWrite(i, HIGH);
+  // }
 
   for (int i = 0; i < ROWS; i++) {
     mcp.pinMode(poi[i][0], OUTPUT);
+    mcp.digitalWrite(poi[i][0], HIGH);
+    delay(200);
     mcp.digitalWrite(poi[i][0], LOW);
     poi[i][1] = 0;
     poi[i][2] = poi_cap[i].capacitiveSensor(30);
   }
 
+  // mcp.digitalWrite(9, HIGH);
+  // mcp.digitalWrite(10, HIGH);
+
   ready();
-  Serial.println("Setup done!");
+  //Serial.println("Setup done 1!");
 }
  
 // main loop
 void loop() {
   for (int i = 0; i < ROWS; i++) {
     int reading = poi_cap[i].capacitiveSensor(30);
+    //Serial.println(reading);
 
-    if (reading != 0 && reading > poi[i][2] + touchThreshold) {
-      Serial.print("poi ");
-      Serial.print(i + 1); // human index counting
-      Serial.println(" pressed");
+    if (reading != 0 && reading > poi[i][2] + touchThreshold && poi[i][1] == 0) {
+      // Serial.print("poi ");
+      // Serial.print(i + 1); // human index counting
+      // Serial.println(" pressed");
+      Serial.print("play-");
       Serial.println(poi[i][3]);
       mcp.digitalWrite(poi[i][0], HIGH);
       poi[i][1] = 1;
     }
-    if (reading != 0 && reading < poi[i][2] - touchThreshold) { 
-      Serial.print("poi ");
-      Serial.print(i + 1); // human index counting
-      Serial.println(" released");
+    if (reading != 0 && reading < poi[i][2] - touchThreshold && poi[i][1] == 1) { 
+      // Serial.print("poi ");
+      // Serial.print(i + 1); // human index counting
+      // Serial.println(" released");
+      Serial.println("released");
       mcp.digitalWrite(poi[i][0], LOW);
       poi[i][1] = 0;
     }
