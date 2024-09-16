@@ -27,7 +27,7 @@ String inputString = "";      // a String to hold incoming data
 bool stringComplete = false;  // whether the string is complete
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   //Serial2.begin(9600, SERIAL_8N1, RXp2, TXp2);  
 
   Serial.println("ESP32 setting up");
