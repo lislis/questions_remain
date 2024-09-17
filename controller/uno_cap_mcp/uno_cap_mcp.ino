@@ -21,6 +21,7 @@
   poi[number][1] == state of led
   poi[number][2] == last capacitive reading
   poi[number][3] == filename
+  poi[number][4] == active flag // not used rn
 
   We're sending the filename over serial to another arduino
 
@@ -30,14 +31,14 @@
 Adafruit_MCP23X17 mcp;
 
 // Adjust ROWS and the poi array if you connect more pois
-int const COLS = 4;
+int const COLS = 5;
 int const ROWS = 9;
 // the leds are connected via mcp, the buttons are regular digital pins
 // poi and poi_cap share the same index
-int poi[ROWS][COLS] = {{7, 0, 0, 1}, {6, 0, 0, 2}, {5, 0, 0, 3}, {4, 0, 0, 4}, {3, 0, 0, 5}, {2, 0, 0, 6}, {1, 0, 0, 7}, {0, 0, 0, 8}, {8, 0, 0, 9}};
+int poi[ROWS][COLS] = {{7, 0, 0, 1, 0}, {6, 0, 0, 2, 0}, {5, 0, 0, 3, 0}, {4, 0, 0, 4, 0}, {3, 0, 0, 5, 0}, {2, 0, 0, 6, 0}, {1, 0, 0, 7, 0}, {0, 0, 0, 8, 0}, {8, 0, 0, 9, 0}};
 
 // to be adjusted
-#define touchThreshold 500
+#define touchThreshold 400
 // CapacitiveSensor(base, measurement);
 // between the base pin and the respective others is a > 1M Ohm resistor
 CapacitiveSensor poi_cap[ROWS] = {
@@ -66,15 +67,10 @@ void setup(void) {
   //Serial.print("waiting for mcp...");
   if (!mcp.begin_I2C()) {
     //Serial.println("failed!");
-    error();
+    mcp.digitalWrite(ready_led, LOW);
+    mcp.digitalWrite(error_led, HIGH);
     while(1);
   }
-  //Serial.println("OK!");
-
-  // for (int i = 0; i < 16; i++) {
-  //   mcp.pinMode(i, OUTPUT);
-  //   mcp.digitalWrite(i, HIGH);
-  // }
 
   for (int i = 0; i < ROWS; i++) {
     mcp.pinMode(poi[i][0], OUTPUT);
@@ -88,7 +84,8 @@ void setup(void) {
   // mcp.digitalWrite(9, HIGH);
   // mcp.digitalWrite(10, HIGH);
 
-  ready();
+  mcp.digitalWrite(ready_led, HIGH);
+  mcp.digitalWrite(error_led, LOW);
   //Serial.println("Setup done 1!");
 }
  
@@ -96,35 +93,25 @@ void setup(void) {
 void loop() {
   for (int i = 0; i < ROWS; i++) {
     int reading = poi_cap[i].capacitiveSensor(30);
-    //Serial.println(reading);
 
     if (reading != 0 && reading > poi[i][2] + touchThreshold && poi[i][1] == 0) {
       // Serial.print("poi ");
       // Serial.print(i + 1); // human index counting
       // Serial.println(" pressed");
-      Serial.print("play-");
+      Serial.print("press-");
       Serial.println(poi[i][3]);
       mcp.digitalWrite(poi[i][0], HIGH);
-      poi[i][1] = 1;
+      poi[i][1] = 1; 
     }
     if (reading != 0 && reading < poi[i][2] - touchThreshold && poi[i][1] == 1) { 
       // Serial.print("poi ");
       // Serial.print(i + 1); // human index counting
       // Serial.println(" released");
-      Serial.println("released");
+      Serial.print("release-");
+      Serial.println(poi[i][3]);
       mcp.digitalWrite(poi[i][0], LOW);
       poi[i][1] = 0;
     }
     poi[i][2] = reading;
   }
-}
-
-
-void error() {
-  mcp.digitalWrite(ready_led, LOW);
-  mcp.digitalWrite(error_led, HIGH);
-}
-void ready() {
-  mcp.digitalWrite(ready_led, HIGH);
-  mcp.digitalWrite(error_led, LOW);
 }

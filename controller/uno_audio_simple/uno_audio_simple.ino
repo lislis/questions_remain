@@ -6,9 +6,6 @@
 TMRpcm audio;
 File root;
 
-
-
-
 void setup(void) {
   Serial.begin(9600);
   delay(100);
@@ -32,6 +29,8 @@ void setup(void) {
 // main loop
 String inputString = "";
 bool stringComplete = false;
+String command = "";
+int commandArg = 0;
 
 void loop() {
   if (Serial.available()) {
@@ -44,37 +43,38 @@ void loop() {
     }
   }
 
-  if (!audio.isPlaying()) {
-    String command = "";
-    int commandArg = 0;
+  command = "";
+  commandArg = 0;
+  // if (!audio.isPlaying()) {
+    
     if (stringComplete) {
       //Serial.println(inputString);
       int index = inputString.indexOf("-");
       if (index != -1) {
         command = inputString.substring(0, index);
-        commandArg = inputString.substring(index + 1).toInt() -1; // for human index counting
+        commandArg = inputString.substring(index + 1).toInt(); // for human index counting
 
-        Serial.print(command);
-        Serial.println(commandArg);
+        // Serial.print(command);
+        // Serial.println(commandArg);
       }
       inputString = "";
       stringComplete = false;
     }
+  // }
 
-    //  if (command == "press") {
-    //     audio.stopPlayback();
-    //     delay(50);
-    //     mcp.digitalWrite(poi[commandArg][0], HIGH);
-    //     char buffer[6];
-    //     sprintf(buffer, "%03d.wav", poi[commandArg][3]);
-    //     Serial.print("Playing ");
-    //     Serial.println(buffer);
-    //     audio.play(buffer);
-    //   }
-
-    //   if (command == "release") {
-    //     mcp.digitalWrite(poi[commandArg][0], LOW);
-    //     audio.stopPlayback(); 
-    //   }
+  if (command == "press") {
+    audio.stopPlayback();
+    delay(5);
+    char buffer[6];
+    sprintf(buffer, "%03d.wav", commandArg);
+    Serial.print("Playing ");
+    Serial.println(buffer);
+    audio.play(buffer);
   }
+
+  // if (command == "release") {
+  //   Serial.print("receiv released");
+  //   Serial.println(commandArg);
+  //   audio.stopPlayback(); 
+  // }
 }
