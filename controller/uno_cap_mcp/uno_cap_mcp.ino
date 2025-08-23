@@ -38,7 +38,7 @@ int const ROWS = 9;
 int poi[ROWS][COLS] = {{7, 0, 0, 1, 0}, {6, 0, 0, 2, 0}, {5, 0, 0, 3, 0}, {4, 0, 0, 4, 0}, {3, 0, 0, 5, 0}, {2, 0, 0, 6, 0}, {1, 0, 0, 7, 0}, {0, 0, 0, 8, 0}, {8, 0, 0, 9, 0}};
 
 // to be adjusted
-#define touchThreshold 400
+#define touchThreshold 39
 // CapacitiveSensor(base, measurement);
 // between the base pin and the respective others is a > 1M Ohm resistor
 CapacitiveSensor poi_cap[ROWS] = {
@@ -91,13 +91,18 @@ void setup(void) {
  
 // main loop
 void loop() {
+  //int r9 = poi_cap[8].capacitiveSensor(30);
+  //Serial.println(r9);
+
   for (int i = 0; i < ROWS; i++) {
     int reading = poi_cap[i].capacitiveSensor(30);
+    //Serial.println(reading);
 
     if (reading != 0 && reading > poi[i][2] + touchThreshold && poi[i][1] == 0) {
       // Serial.print("poi ");
       // Serial.print(i + 1); // human index counting
       // Serial.println(" pressed");
+      //Serial.print(reading);
       Serial.print("press-");
       Serial.println(poi[i][3]);
       mcp.digitalWrite(poi[i][0], HIGH);

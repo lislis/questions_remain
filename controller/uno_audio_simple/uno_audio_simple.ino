@@ -72,9 +72,9 @@ void loop() {
     audio.play(buffer);
   }
 
-  // if (command == "release") {
-  //   Serial.print("receiv released");
-  //   Serial.println(commandArg);
-  //   audio.stopPlayback(); 
-  // }
+  if (command == "release") {
+    Serial.print("receiv released");
+    Serial.println(commandArg);
+    audio.stopPlayback(); 
+  }
 }
